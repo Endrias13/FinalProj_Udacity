@@ -24,7 +24,7 @@ stages:
     steps:
     # Install Terraform on the pipeline agent 
     - task: TerraformInstaller@1
-      displayName: 'Terrafom installation'
+      displayName: 'Terrafom installation, wait for me'
       inputs:
-            terraformVersion: latest
+            terraformVersion: 1.1.2
     
