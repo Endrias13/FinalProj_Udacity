@@ -17,6 +17,10 @@ variables:
   projectRoot: $(System.DefaultWorkingDirectory)
   # Environment name
   environmentName: 'test'
+  #Resource Group Name
+  rgname: 'endrias2024_rg_354888' 
+  #Storage Name
+  storename: 'mystoragefinalproj' 
 
 stages:
 - stage: Build
@@ -44,8 +48,8 @@ stages:
         command: 'init'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         backendServiceArm: '$(azureServiceConnectionId)'
-        backendAzureRmResourceGroupName: 'Azuredevops'
-        backendAzureRmStorageAccountName: 'tfstate281845088'
+        backendAzureRmResourceGroupName: '$(rgname)'
+        backendAzureRmStorageAccountName: '$(storename)'
         backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'test.terraform.tfstate'
 
