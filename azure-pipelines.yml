@@ -30,7 +30,7 @@ stages:
       displayName: 'Install unzip utility'
     
     # Install Terraform on the pipeline agent 
-    - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
+    - task: TerraformInstaller@0
       displayName: 'Terrafom installation'
       inputs:
             terraformVersion: 1.2.9
