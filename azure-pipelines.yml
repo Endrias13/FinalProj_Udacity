@@ -30,7 +30,7 @@ stages:
       displayName: 'Install unzip utility'
     
     # Install Terraform on the pipeline agent 
-    - task: TerraformInstaller@0
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
       displayName: 'Terrafom installation, wait for me'
       inputs:
             terraformVersion: 1.2.9
