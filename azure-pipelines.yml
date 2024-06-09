@@ -38,7 +38,7 @@ stages:
 
     # ToDo: Replace the resource group name, storage account name, and container name below
     - task: TerraformTaskV3@3
-      displayName: 'Terrafom init'
+      displayName: 'Terrafom init again..'
       inputs:
         provider: 'azurerm'
         command: 'init'
