@@ -10,7 +10,7 @@ variable "resource_type" {
   default = "NET"
 }
 
-variable "resource_name" {
+variable "resource_group" {
   description = "The name of the resource group in which to create the virtual machine."
   type        = string
   default = "endrias2024_rg_354888"
