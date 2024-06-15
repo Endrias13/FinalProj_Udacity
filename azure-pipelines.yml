@@ -21,6 +21,8 @@ variables:
   rgname: 'endrias2024_rg_354888' 
   #Storage Name
   storename: 'mystoragefinalproj' 
+  backend_key: 'test.terraform.tfstate'
+  storage_account_key: 'SIX4qMsGiDSN40qEZ+YFZm8MZB0EDmLLz3YGlQkgrG/u92UAJCLhgdqrvVK6qqAWrM6OASsFCeXZ+ASt4df8mw=='
 
 stages:
 - stage: Build
@@ -40,6 +42,10 @@ stages:
       inputs:
             terraformVersion: 1.2.9
 
+    - script: |
+        ./configure-tfstate-storage-account.sh
+      displayName: 'Run storage account setup script'
+
     # ToDo: Replace the resource group name, storage account name, and container name below
     - task: TerraformTaskV3@3
       displayName: 'Terrafom init again..'
@@ -51,7 +57,8 @@ stages:
         backendAzureRmResourceGroupName: '$(rgname)'
         backendAzureRmStorageAccountName: '$(storename)'
         backendAzureRmContainerName: 'tfstate'
-        backendAzureRmKey: 'test.terraform.tfstate'
+        backendAzureRmKey: '$(backend_key)'
+        backendAzureRmAccessKey: '$(storage_account_key)'
 
     # Run Terraform Validate    
     - task: TerraformTaskV3@3
