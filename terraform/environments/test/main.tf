@@ -18,8 +18,8 @@ terraform {
     resource_group_name   = var.resource_group_name
     storage_account_name  = var.storage_account_name
     container_name       = var.container_name
-    key                   = "test.terraform.tfstate"
-    access_key           = "GTik58kbEF9mJjhCTRxEz52B/ADVlLwtVYDJp3+X4x2bFeoOd4VM9Fw3XambggLm6nVvtfjQLP5q+AStgXOc/g=="
+    key                   = ""
+    access_key           = ""
   }
 }
 
