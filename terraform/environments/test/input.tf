@@ -58,8 +58,8 @@ variable "virtual_network_name" {
 }
 
 variable "address_prefix_test" {
-  type        = string
-  default = "10.5.1.0/24"
+  type        = list(string)
+  default =  ["10.0.1.0/24"]
 }
 
 variable "address_space" {
