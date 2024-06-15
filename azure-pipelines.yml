@@ -64,7 +64,13 @@ stages:
         provider: 'azurerm'
         command: 'validate'
 
-  
+
+      # Remove the existing resource group from the state
+    - script: |
+        terraform state rm module.resource_group.azurerm_resource_group.test
+      displayName: 'Terraform state rm resource group'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+
     # Import the existing resource group
     - script: |
         terraform import module.resource_group.azurerm_resource_group.test /subscriptions/74e2073f-57ce-4af8-8ea6-8ecc9e28d555/resourceGroups/endrias2024_rg_354888
