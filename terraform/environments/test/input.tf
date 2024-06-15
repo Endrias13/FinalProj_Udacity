@@ -46,6 +46,11 @@ variable "resource_group" {
   default = "endrias2024_rg_354888"
 }
 
+variable "resource_type" {
+  description = "The type of resource"
+  type        = string
+}
+
 variable "application_type" {
   type        = string
   default = "endriasApplication"
