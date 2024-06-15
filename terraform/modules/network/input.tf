@@ -29,11 +29,6 @@ variable "location" {
   default = "East Us"
 }
 
-variable "resource_group" {
-  type        = string
-  default = "endrias2024_rg_354888"
-}
-
 variable "application_type" {
   type        = string
   default = "endriasApplication"
