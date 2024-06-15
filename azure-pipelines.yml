@@ -76,15 +76,81 @@ stages:
         commandOptions: '-auto-approve -no-color'
 
     
-      # Destroy VM, Network Interface, Public IP, and Managed Disk
+    # Destroy VM
     - task: TerraformTaskV3@3
-      displayName: 'Terraform destroy VM and related resources'
+      displayName: 'Terraform destroy VM'
       inputs:
         provider: 'azurerm'
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_virtual_machine.finalProj-VM -target=azurerm_network_interface.finalproj-vm626_z1 -target=azurerm_public_ip.finalProj-VM-ip -target=azurerm_managed_disk.finalProj-VM_OsDisk_1_25030be430a044d1a5971866351741fa'
+        commandOptions: '-auto-approve -no-color -target=azurerm_virtual_machine.finalProj-VM'
+        additionalArguments: '-timeout=20m'
+    
+    # Destroy Network Interface
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform destroy Network Interface'
+      inputs:
+        provider: 'azurerm'
+        command: 'destroy'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+        commandOptions: '-auto-approve -no-color -target=azurerm_network_interface.finalproj-vm626_z1'
+        additionalArguments: '-timeout=20m'
+    
+    # Destroy Public IP
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform destroy Public IP'
+      inputs:
+        provider: 'azurerm'
+        command: 'destroy'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+        commandOptions: '-auto-approve -no-color -target=azurerm_public_ip.finalProj-VM-ip'
+        additionalArguments: '-timeout=20m'
+    
+    # Destroy Managed Disk
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform destroy Managed Disk'
+      inputs:
+        provider: 'azurerm'
+        command: 'destroy'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+        commandOptions: '-auto-approve -no-color -target=azurerm_managed_disk.finalProj-VM_OsDisk_1_25030be430a044d1a5971866351741fa'
+        additionalArguments: '-timeout=20m'
+    
+    # Destroy Virtual Network
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform destroy Virtual Network'
+      inputs:
+        provider: 'azurerm'
+        command: 'destroy'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+        commandOptions: '-auto-approve -no-color -target=azurerm_virtual_network.endriasApplication-NET'
+        additionalArguments: '-timeout=20m'
+    
+    # Destroy Storage Account
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform destroy Storage Account'
+      inputs:
+        provider: 'azurerm'
+        command: 'destroy'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+        commandOptions: '-auto-approve -no-color -target=azurerm_storage_account.mystoragefinalproj'
+        additionalArguments: '-timeout=20m'
+    
+    # Destroy Subnet Network Security Group Association
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform destroy Subnet NSG Association'
+      inputs:
+        provider: 'azurerm'
+        command: 'destroy'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+        commandOptions: '-auto-approve -no-color -target=azurerm_subnet_network_security_group_association.endriasApplication-NET-sub'
         additionalArguments: '-timeout=20m'
     
     # Destroy remaining resources
