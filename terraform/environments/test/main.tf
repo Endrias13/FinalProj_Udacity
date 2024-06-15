@@ -19,7 +19,7 @@ terraform {
     storage_account_name  = var.storage_account_name
     container_name       = var.container_name
     key                   = var.key
-    access_key           = var.store_key
+    access_key           = "SIX4qMsGiDSN40qEZ+YFZm8MZB0EDmLLz3YGlQkgrG/u92UAJCLhgdqrvVK6qqAWrM6OASsFCeXZ+ASt4df8mw=="
   }
 }
 
