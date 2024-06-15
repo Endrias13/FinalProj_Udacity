@@ -100,6 +100,20 @@ stages:
       displayName: 'Terraform manage network security group'
       workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
 
+    # Remove and Import Linux Web App
+    - script: |
+        terraform state rm module.appservice.azurerm_linux_web_app.test || true
+        terraform import module.appservice.azurerm_linux_web_app.test /subscriptions/74e2073f-57ce-4af8-8ea6-8ecc9e28d555/resourceGroups/endrias2024_rg_354888/providers/Microsoft.Web/sites/endriasApplication-AppService
+      displayName: 'Terraform manage Linux Web App'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+    
+    # Remove and Import Subnet
+    - script: |
+        terraform state rm module.network.azurerm_subnet.test || true
+        terraform import module.network.azurerm_subnet.test /subscriptions/74e2073f-57ce-4af8-8ecc9e28d555/resourceGroups/endrias2024_rg_354888/providers/Microsoft.Network/virtualNetworks/endriasApplication-NET/subnets/endriasApplication-NET-sub
+      displayName: 'Terraform manage subnet'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+
 
     # Run Terraform Apply
     - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
