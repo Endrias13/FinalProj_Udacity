@@ -72,6 +72,7 @@ stages:
         command: 'apply'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+        commandOptions: '-auto-approve -no-color -detailed-exitcode'
 
     # Destroy the resources in Azure
     # ToDo: Change the workingDirectory path, as applicable to you
