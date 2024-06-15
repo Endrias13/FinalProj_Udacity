@@ -115,6 +115,13 @@ stages:
       displayName: 'Terraform manage subnet'
       workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
 
+    # Remove and Import Subnet Network Security Group Association
+    - script: |
+        terraform state rm module.nsg-test.azurerm_subnet_network_security_group_association.test || true
+        terraform import module.nsg-test.azurerm_subnet_network_security_group_association.test /subscriptions/74e2073f-57ce-4af8-8ecc9e28d555/resourceGroups/endrias2024_rg_354888/providers/Microsoft.Network/virtualNetworks/endriasApplication-NET/subnets/endriasApplication-NET-sub
+      displayName: 'Terraform manage subnet NSG association'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+
     
     # Run Terraform Apply
     - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
