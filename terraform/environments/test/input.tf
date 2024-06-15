@@ -55,5 +55,13 @@ variable "address_space" {
   default     = ["10.5.0.0/16"]
 }
 
+variable "storage_account_name" {
+  description = "The name of the storage account"
+  type        = string
+}
 
+variable "container_name" {
+  description = "The name of the blob container"
+  type        = string
+}
 
