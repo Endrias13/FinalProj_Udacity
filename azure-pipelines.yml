@@ -65,25 +65,42 @@ stages:
         command: 'validate'
 
 
-      # Remove the existing resource group from the state
+    # Remove and Import Resource Group
     - script: |
-        terraform state rm module.resource_group.azurerm_resource_group.test
-      displayName: 'Terraform state rm resource group'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-
-    # Import the existing resource group
-    - script: |
+        terraform state rm module.resource_group.azurerm_resource_group.test || true
         terraform import module.resource_group.azurerm_resource_group.test /subscriptions/74e2073f-57ce-4af8-8ea6-8ecc9e28d555/resourceGroups/endrias2024_rg_354888
-      displayName: 'Terraform import resource group'
+      displayName: 'Terraform manage resource group'
       workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
     
-    # Import the existing public IP address
+    # Remove and Import Public IP
     - script: |
+        terraform state rm module.publicip.azurerm_public_ip.test || true
         terraform import module.publicip.azurerm_public_ip.test /subscriptions/74e2073f-57ce-4af8-8ea6-8ecc9e28d555/resourceGroups/endrias2024_rg_354888/providers/Microsoft.Network/publicIPAddresses/endriasApplication-publicip-pubip
-      displayName: 'Terraform import public IP'
+      displayName: 'Terraform manage public IP'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+    
+    # Remove and Import Service Plan
+    - script: |
+        terraform state rm module.appservice.azurerm_service_plan.test || true
+        terraform import module.appservice.azurerm_service_plan.test /subscriptions/74e2073f-57ce-4af8-8ea6-8ecc9e28d555/resourceGroups/endrias2024_rg_354888/providers/Microsoft.Web/serverFarms/endriasApplication-AppService
+      displayName: 'Terraform manage service plan'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+    
+    # Remove and Import Virtual Network
+    - script: |
+        terraform state rm module.network.azurerm_virtual_network.test || true
+        terraform import module.network.azurerm_virtual_network.test /subscriptions/74e2073f-57ce-4af8-8ea6-8ecc9e28d555/resourceGroups/endrias2024_rg_354888/providers/Microsoft.Network/virtualNetworks/endriasApplication-NET
+      displayName: 'Terraform manage virtual network'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+    
+    # Remove and Import Network Security Group
+    - script: |
+        terraform state rm module.nsg-test.azurerm_network_security_group.nsg || true
+        terraform import module.nsg-test.azurerm_network_security_group.nsg /subscriptions/74e2073f-57ce-4af8-8ea6-8ecc9e28d555/resourceGroups/endrias2024_rg_354888/providers/Microsoft.Network/networkSecurityGroups/endriasApplication-NSG
+      displayName: 'Terraform manage network security group'
       workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
 
-    
+
     # Run Terraform Apply
     - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
       displayName: Terraform apply
