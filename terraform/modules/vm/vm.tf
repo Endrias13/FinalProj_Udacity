@@ -1,7 +1,7 @@
 resource "azurerm_network_interface" "" {
   name                = ""
-  location            = ""
-  resource_group_name = ""
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
   ip_configuration {
     name                          = "internal"
@@ -12,14 +12,14 @@ resource "azurerm_network_interface" "" {
 }
 
 resource "azurerm_linux_virtual_machine" "" {
-  name                = ""
-  location            = ""
-  resource_group_name = ""
+  name                = var.name
+  location            = var.location
+  resource_group_name = var.resource_group_name
   size                = "Standard_DS2_v2"
-  admin_username      = ""
+  admin_username      = var.admin_username
   network_interface_ids = []
   admin_ssh_key {
-    username   = ""
+    username   = var.admin_username
     public_key = "file("~/.ssh/id_rsa.pub")"
   }
   os_disk {
@@ -33,3 +33,4 @@ resource "azurerm_linux_virtual_machine" "" {
     version   = "latest"
   }
 }
+
