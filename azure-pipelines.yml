@@ -133,15 +133,28 @@ stages:
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
         commandOptions: '-auto-approve -no-color'
 
-    # Destroy the resources in Azure
-    # ToDo: Change the workingDirectory path, as applicable to you
+    
+      # Destroy VM, Network Interface, Public IP, and Managed Disk
     - task: TerraformTaskV3@3
-      displayName: Terraform destroy
+      displayName: 'Terraform destroy VM and related resources'
       inputs:
         provider: 'azurerm'
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+        commandOptions: '-auto-approve -no-color -target=azurerm_virtual_machine.finalProj-VM -target=azurerm_network_interface.finalproj-vm626_z1 -target=azurerm_public_ip.finalProj-VM-ip -target=azurerm_managed_disk.finalProj-VM_OsDisk_1_25030be430a044d1a5971866351741fa'
+        additionalArguments: '-timeout=20m'
+    
+    # Destroy remaining resources
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform destroy remaining resources'
+      inputs:
+        provider: 'azurerm'
+        command: 'destroy'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+        commandOptions: '-auto-approve -no-color'
+        additionalArguments: '-timeout=20m'
 
 
 
