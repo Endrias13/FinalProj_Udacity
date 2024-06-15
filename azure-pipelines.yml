@@ -120,6 +120,28 @@ stages:
         commandOptions: '-auto-approve -no-color -target=azurerm_managed_disk.finalProj-VM_OsDisk_1_25030be430a044d1a5971866351741fa'
         additionalArguments: '-timeout=20m'
     
+    # Destroy Subnet Network Security Group Association
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform destroy Subnet NSG Association'
+      inputs:
+        provider: 'azurerm'
+        command: 'destroy'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+        commandOptions: '-auto-approve -no-color -target=azurerm_subnet_network_security_group_association.endriasApplication-NET-sub'
+        additionalArguments: '-timeout=20m'
+    
+    # Destroy Subnet
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform destroy Subnet'
+      inputs:
+        provider: 'azurerm'
+        command: 'destroy'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+        commandOptions: '-auto-approve -no-color -target=azurerm_subnet.endriasApplication-NET-sub'
+        additionalArguments: '-timeout=20m'
+    
     # Destroy Virtual Network
     - task: TerraformTaskV3@3
       displayName: 'Terraform destroy Virtual Network'
@@ -140,17 +162,6 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
         commandOptions: '-auto-approve -no-color -target=azurerm_storage_account.mystoragefinalproj'
-        additionalArguments: '-timeout=20m'
-    
-    # Destroy Subnet Network Security Group Association
-    - task: TerraformTaskV3@3
-      displayName: 'Terraform destroy Subnet NSG Association'
-      inputs:
-        provider: 'azurerm'
-        command: 'destroy'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_subnet_network_security_group_association.endriasApplication-NET-sub'
         additionalArguments: '-timeout=20m'
     
     # Destroy remaining resources
