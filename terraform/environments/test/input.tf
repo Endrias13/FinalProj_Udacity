@@ -25,6 +25,11 @@ variable "key" {
   default     = "terraform.tfstate"
 }
 
+variable "store_key" {
+  description = "my_key"
+  type        = string
+  default     = "SIX4qMsGiDSN40qEZ+YFZm8MZB0EDmLLz3YGlQkgrG/u92UAJCLhgdqrvVK6qqAWrM6OASsFCeXZ+ASt4df8mw=="
+}
 
 variable "tenant_id" {
   type        = string
