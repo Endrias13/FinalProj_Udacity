@@ -10,6 +10,7 @@ trigger:
 pool: myFinalPool
 
 variables:
+  system.debug: true
   python.version: '3.9'
   # ToDo: Replace the service connection name as used in the DevOps project settings
   azureServiceConnectionId: 'myServiceConnection'
@@ -53,7 +54,7 @@ stages:
         backendAzureRmResourceGroupName: '$(rgname)'
         backendAzureRmStorageAccountName: '$(storename)'
         backendAzureRmContainerName: 'tfstate'
-        backendAzureRmKey: 'mmm'
+        backendAzureRmKey: '$(backend_key)'
         backendAzureRmAccessKey: '$(storage_account_key)'
 
     # Run Terraform Validate    
