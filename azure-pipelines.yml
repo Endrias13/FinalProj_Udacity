@@ -63,6 +63,13 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'validate'
+
+
+    - script: |
+        terraform import module.resource_group.azurerm_resource_group.test /subscriptions/74e2073f-57ce-4af8-8ea6-8ecc9e28d555/resourceGroups/endrias2024_rg_354888
+      displayName: 'Terraform import resource group'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+
     
     # Run Terraform Apply
     - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
