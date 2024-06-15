@@ -75,7 +75,6 @@ stages:
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
         commandOptions: '-auto-approve -no-color'
 
-    
     # Destroy VM
     - task: TerraformTaskV3@3
       displayName: 'Terraform destroy VM'
@@ -174,7 +173,6 @@ stages:
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
         commandOptions: '-auto-approve -no-color'
         additionalArguments: '-timeout=20m'
-
 
 
     
