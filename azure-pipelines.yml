@@ -53,7 +53,7 @@ stages:
         backendAzureRmResourceGroupName: '$(rgname)'
         backendAzureRmStorageAccountName: '$(storename)'
         backendAzureRmContainerName: 'tfstate'
-        backendAzureRmKey: '$(backend_key)'
+        backendAzureRmKey: 'mmm'
         backendAzureRmAccessKey: '$(storage_account_key)'
 
     # Run Terraform Validate    
