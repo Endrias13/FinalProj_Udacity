@@ -3,6 +3,9 @@ subscription_id = "74e2073f-57ce-4af8-8ea6-8ecc9e28d555"
 client_id = "0db55e05-308d-4cb9-894b-928195cb749f"
 client_secret = "f25e1309-a912-499f-9000-f297d5c791ff"
 tenant_id = "907c341a-e1bc-44f4-a6f5-c11c86a3b671"
+container_name = "tfstate"
+storage_account_name = "mystoragefinalproj"
+
 
 # Resource Group/Location
 location = "East Us"
