@@ -111,7 +111,7 @@ stages:
       # Remove and Import Subnet
     - script: |
         terraform state rm module.network.azurerm_subnet.test || true
-        terraform import module.network.azurerm_subnet.test /subscriptions/74e2073f-57ce-4af8-8ecc9e28d555/resourceGroups/endrias2024_rg_354888/providers/Microsoft.Network/virtualNetworks/endriasApplication-NET/subnets/endriasApplication-NET-sub
+        terraform import module.network.azurerm_subnet.test /subscriptions/74e2073f-57ce-4af8-8ea6-8ecc9e28d555/resourceGroups/endrias2024_rg_354888/providers/Microsoft.Network/virtualNetworks/endriasApplication-NET/subnets/endriasApplication-NET-sub
       displayName: 'Terraform manage subnet'
       workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
 
