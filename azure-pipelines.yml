@@ -163,16 +163,6 @@ stages:
         commandOptions: '-auto-approve -no-color -target=azurerm_storage_account.mystoragefinalproj'
         additionalArguments: '-timeout=20m'
     
-    # Destroy remaining resources
-    - task: TerraformTaskV3@3
-      displayName: 'Terraform destroy remaining resources'
-      inputs:
-        provider: 'azurerm'
-        command: 'destroy'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color'
-        additionalArguments: '-timeout=20m'
 
 
     
