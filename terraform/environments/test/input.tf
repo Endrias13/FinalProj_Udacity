@@ -60,6 +60,13 @@ variable "storage_account_name" {
   type        = string
 }
 
+variable "backend_key" {
+  description = "The key for the Terraform state file"
+  type        = string
+  default     = "test.terraform.tfstate"
+}
+
+
 variable "container_name" {
   description = "The name of the blob container"
   type        = string
