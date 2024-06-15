@@ -4,6 +4,12 @@ variable "resource_group_name" {
   default = "endrias2024_rg_354888"
 }
 
+variable "resource_type" {
+  description = "The type of resource"
+  type        = string
+  default = "NET"
+}
+
 variable "subscription_id" {
   type        = string
   default = "74e2073f-57ce-4af8-8ea6-8ecc9e28d555"
