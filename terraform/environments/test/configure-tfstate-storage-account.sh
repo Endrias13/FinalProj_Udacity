@@ -1,23 +1,29 @@
 #!/bin/bash
-RESOURCE_GROUP_NAME="Azuredevops"
-STORAGE_ACCOUNT_NAME="tfstate$RANDOM$RANDOM"
+
+set -e
+trap 'catchError' ERR
+
+catchError() {
+    echo "Error occurred in script at line: $LINENO"
+    exit 1
+}
+
+RESOURCE_GROUP_NAME="endrias2024_rg_354888"
+STORAGE_ACCOUNT_NAME="mystoragefinalproj"
 CONTAINER_NAME="tfstate"
+LOCATION="East US"
 
-# This command is not needed in the Udacity provided Azure account. 
-# Create resource group
-# az group create --name $RESOURCE_GROUP_NAME --location eastus
+echo "Creating Resource Group: $RESOURCE_GROUP_NAME in $LOCATION"
+az group create --name $RESOURCE_GROUP_NAME --location "$LOCATION"
 
-# Create storage account
-az storage account create --resource-group $RESOURCE_GROUP_NAME --name $STORAGE_ACCOUNT_NAME --sku Standard_LRS --encryption-services blob
+echo "Creating Storage Account: $STORAGE_ACCOUNT_NAME"
+az storage account create --resource-group $RESOURCE_GROUP_NAME --name $STORAGE_ACCOUNT_NAME --sku Standard_LRS --encryption-services blob --location "$LOCATION"
 
-# Get storage account key
-ACCOUNT_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP_NAME --account-name $STORAGE_ACCOUNT_NAME --query '[0].value' -o tsv)
-export ARM_ACCESS_KEY=$ACCOUNT_KEY
+echo "Fetching Storage Account Key"
+ACCOUNT_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP_NAME --account-name $STORAGE_ACCOUNT_NAME --query '[0].value' --output tsv)
+echo "Storage Account Key: $ACCOUNT_KEY"
 
-# Create blob container
+echo "Creating Blob Container: $CONTAINER_NAME"
 az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME --account-key $ACCOUNT_KEY
-echo "RESOURCE_GROUP_NAME=$RESOURCE_GROUP_NAME"
-echo "STORAGE_ACCOUNT_NAME=$STORAGE_ACCOUNT_NAME"
-echo "CONTAINER_NAME=$CONTAINER_NAME"
-echo "ACCOUNT_KEY=$ACCOUNT_KEY"
+
 
