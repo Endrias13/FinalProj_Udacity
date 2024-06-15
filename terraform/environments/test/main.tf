@@ -1,23 +1,33 @@
 provider "azurerm" {
-  tenant_id       = "${var.tenant_id}"
-  subscription_id = "${var.subscription_id}"
-  client_id       = "${var.client_id}"
-  client_secret   = "${var.client_secret}"
+  tenant_id       = "907c341a-e1bc-44f4-a6f5-c11c86a3b671"
+  subscription_id = "74e2073f-57ce-4af8-8ea6-8ecc9e28d555"
+  client_id       = "0db55e05-308d-4cb9-894b-928195cb749f"
+  client_secret   = "4_W8Q~2qYIZ6y9r.SQPNA9PFebMdBUF7jnE-OcnX"
   features {}
 }
+
+
 terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~>3.0"
+    }
+  }
   backend "azurerm" {
-    storage_account_name = ""
-    container_name       = ""
-    key                  = ""
-    access_key           = ""
+    storage_account_name = "finalprojstore"
+    container_name       = "finalprojcontain"
+    key                  = "GTik58kbEF9mJjhCTRxEz52B/ADVlLwtVYDJp3+X4x2bFeoOd4VM9Fw3XambggLm6nVvtfjQLP5q+AStgXOc/g=="
+    access_key           = "GTik58kbEF9mJjhCTRxEz52B/ADVlLwtVYDJp3+X4x2bFeoOd4VM9Fw3XambggLm6nVvtfjQLP5q+AStgXOc/g=="
   }
 }
+
 module "resource_group" {
   source               = "../../modules/resource_group"
   resource_group       = "${var.resource_group}"
   location             = "${var.location}"
 }
+
 module "network" {
   source               = "../../modules/network"
   address_space        = "${var.address_space}"
