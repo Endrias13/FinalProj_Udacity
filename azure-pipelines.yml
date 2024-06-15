@@ -42,10 +42,6 @@ stages:
       inputs:
             terraformVersion: 1.2.9
 
-    - script: |
-        ./configure-tfstate-storage-account.sh
-      displayName: 'Run storage account setup script'
-
     # ToDo: Replace the resource group name, storage account name, and container name below
     - task: TerraformTaskV3@3
       displayName: 'Terrafom init again..'
