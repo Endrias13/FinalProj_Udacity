@@ -10,6 +10,12 @@ variable "resource_type" {
   default = "NET"
 }
 
+variable "resource_name" {
+  description = "The name of the resource group in which to create the virtual machine."
+  type        = string
+  default = "endrias2024_rg_354888"
+}
+
 variable "subscription_id" {
   type        = string
   default = "74e2073f-57ce-4af8-8ea6-8ecc9e28d555"
