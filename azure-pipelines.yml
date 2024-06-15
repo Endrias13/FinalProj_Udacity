@@ -50,8 +50,6 @@ stages:
         backendServiceArm: '$(azureServiceConnectionId)'
         backendAzureRmResourceGroupName: '$(rgname)'
         backendAzureRmStorageAccountName: '$(storename)'
-        backendAzureRmContainerName: 'tfstate'
-        backendAzureRmKey: 'test.terraform.tfstate'
 
     # Run Terraform Validate    
     - task: TerraformTaskV3@3
