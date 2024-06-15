@@ -19,6 +19,13 @@ variable "client_secret" {
   default = "f25e1309-a912-499f-9000-f297d5c791ff"
 }
 
+variable "key" {
+  description = "The name of the state file"
+  type        = string
+  default     = "terraform.tfstate"
+}
+
+
 variable "tenant_id" {
   type        = string
   default = "907c341a-e1bc-44f4-a6f5-c11c86a3b671"
