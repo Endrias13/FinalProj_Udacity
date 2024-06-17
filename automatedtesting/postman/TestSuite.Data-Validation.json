@@ -1,23 +1,187 @@
 {
   "info": {
-    "name": "Data Validation Test Suite",
+    "_postman_id": "new-id-for-regression-suite",
+    "name": "Regression Test Suite",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Validate API Response",
+      "name": "Create Employee",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "new-id",
+            "exec": [
+              "pm.test(\"Successful response\", function () {",
+              "    pm.expect(pm.response.text()).to.include(\"success\");",
+              "});",
+              "var json = pm.response.json();",
+              "pm.environment.set(\"id\", json.data.id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{name}}\",\n    \"salary\": \"{{salary}}\",\n    \"age\": \"{{age}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://dummy.restapiexample.com/api/v1/create",
+          "protocol": "http",
+          "host": [
+            "dummy",
+            "restapiexample",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "create"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Employees",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "new-id",
+            "exec": [
+              "pm.test(\"Successful response\", function () {",
+              "    pm.expect(pm.response.text()).to.include(\"success\");",
+              "});",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://api.example.com/data",
-          "protocol": "https",
-          "host": ["api", "example", "com"],
-          "path": ["data"]
+          "raw": "http://dummy.restapiexample.com/api/v1/employees",
+          "protocol": "http",
+          "host": [
+            "dummy",
+            "restapiexample",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "employees"
+          ]
         }
       },
       "response": []
     }
-    // More requests can be added here
-  ]
+  ],
+  "protocolProfileBehavior": {}
+}{
+  "info": {
+    "_postman_id": "new-id-for-regression-suite",
+    "name": "Regression Test Suite",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Employee",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "new-id",
+            "exec": [
+              "pm.test(\"Successful response\", function () {",
+              "    pm.expect(pm.response.text()).to.include(\"success\");",
+              "});",
+              "var json = pm.response.json();",
+              "pm.environment.set(\"id\", json.data.id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{name}}\",\n    \"salary\": \"{{salary}}\",\n    \"age\": \"{{age}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://dummy.restapiexample.com/api/v1/create",
+          "protocol": "http",
+          "host": [
+            "dummy",
+            "restapiexample",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "create"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Employees",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "new-id",
+            "exec": [
+              "pm.test(\"Successful response\", function () {",
+              "    pm.expect(pm.response.text()).to.include(\"success\");",
+              "});",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://dummy.restapiexample.com/api/v1/employees",
+          "protocol": "http",
+          "host": [
+            "dummy",
+            "restapiexample",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "employees"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "protocolProfileBehavior": {}
 }
