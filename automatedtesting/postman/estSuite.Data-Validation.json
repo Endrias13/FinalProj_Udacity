@@ -1,0 +1,23 @@
+{
+  "info": {
+    "name": "Data Validation Test Suite",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Validate API Response",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.example.com/data",
+          "protocol": "https",
+          "host": ["api", "example", "com"],
+          "path": ["data"]
+        }
+      },
+      "response": []
+    }
+    // More requests can be added here
+  ]
+}
