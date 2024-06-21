@@ -126,7 +126,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_virtual_machine.finalProj-VM'
+        commandOptions: '-auto-approve -no-color -target=azurerm_virtual_machine.finalProj-VM' -lock=false'
         additionalArguments: '-timeout=20m'
     
     # Destroy Network Interface
@@ -137,7 +137,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_network_interface.finalproj-vm626_z1'
+        commandOptions: '-auto-approve -no-color -target=azurerm_network_interface.finalproj-vm626_z1' -lock=false'
         additionalArguments: '-timeout=20m'
     
     # Destroy Public IP
@@ -148,7 +148,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_public_ip.finalProj-VM-ip'
+        commandOptions: '-auto-approve -no-color -target=azurerm_public_ip.finalProj-VM-ip' -lock=false'
         additionalArguments: '-timeout=20m'
     
     # Destroy Managed Disk
@@ -159,7 +159,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_managed_disk.finalProj-VM_OsDisk_1_25030be430a044d1a5971866351741fa'
+        commandOptions: '-auto-approve -no-color -target=azurerm_managed_disk.finalProj-VM_OsDisk_1_25030be430a044d1a5971866351741fa' -lock=false'
         additionalArguments: '-timeout=20m'
     
     # Destroy Subnet Network Security Group Association
@@ -170,7 +170,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_subnet_network_security_group_association.endriasApplication-NET-sub'
+        commandOptions: '-auto-approve -no-color -target=azurerm_subnet_network_security_group_association.endriasApplication-NET-sub' -lock=false'
         additionalArguments: '-timeout=20m'
     
     # Destroy Subnet
@@ -181,7 +181,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_subnet.endriasApplication-NET-sub'
+        commandOptions: '-auto-approve -no-color -target=azurerm_subnet.endriasApplication-NET-sub' -lock=false'
         additionalArguments: '-timeout=20m'
     
     # Destroy Virtual Network
@@ -192,7 +192,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_virtual_network.endriasApplication-NET'
+        commandOptions: '-auto-approve -no-color -target=azurerm_virtual_network.endriasApplication-NET' -lock=false'
         additionalArguments: '-timeout=20m'
     
     # Destroy Storage Account
@@ -203,7 +203,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_storage_account.mystoragefinalproj'
+        commandOptions: '-auto-approve -no-color -target=azurerm_storage_account.mystoragefinalproj' -lock=false'
         additionalArguments: '-timeout=20m'
     
 
