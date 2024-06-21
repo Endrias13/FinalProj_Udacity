@@ -78,13 +78,13 @@ stages:
 
     #--------------------------------------------#    
 
-    # Install Node.js
-    - task: UseNode@1
-      displayName: 'Use Node.js'
+    # Verify Node.js and npm installation
+    - task: CmdLine@2
+      displayName: Verify Node.js Installation
       inputs:
-        versionSpec: '16.x' # Using the latest LTS version of Node.js
-        checkLatest: true
-        
+        script: 'node -v && npm -v'
+        workingDirectory: $(System.DefaultWorkingDirectory)
+    
     # Install Newman
     - task: CmdLine@2
       displayName: Install Newman
