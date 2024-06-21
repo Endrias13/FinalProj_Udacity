@@ -78,7 +78,6 @@ stages:
 
     #--------------------------------------------#    
 
-    # Install Node.js using a script
     - task: CmdLine@2
       displayName: Install Node.js
       inputs:
@@ -88,14 +87,15 @@ stages:
           node -v
           npm -v
         workingDirectory: $(System.DefaultWorkingDirectory)
-
-      # Install Newman
+    
+    # Install Newman with sudo
     - task: CmdLine@2
       displayName: Install Newman
       inputs:
-        script: 'npm install -g newman'
+        script: 'sudo npm install -g newman'
         workingDirectory: $(System.DefaultWorkingDirectory)
-        
+
+            
     # Postman Data Validation Test Suite
     - task: CmdLine@2
       displayName: Run Data Validation Tests
