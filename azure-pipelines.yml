@@ -100,7 +100,7 @@ stages:
       displayName: Run Data Validation Tests
       continueOnError: true
       inputs:
-        script: 'newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
+        script: 'newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --delay-request 10000 --bail newman -x --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     
     - task: PublishTestResults@2
@@ -116,7 +116,7 @@ stages:
       displayName: Run Regression Tests
       continueOnError: true
       inputs:
-        script: 'newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
+        script: 'newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --delay-request 10000 --bail newman -x --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     
     - task: PublishTestResults@2
