@@ -95,13 +95,12 @@ stages:
         script: 'sudo npm install -g newman'
         workingDirectory: $(System.DefaultWorkingDirectory)
 
-            
     # Postman Data Validation Test Suite
     - task: CmdLine@2
       displayName: Run Data Validation Tests
       continueOnError: true
       inputs:
-        script: 'newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml --reporter-cli-no-failures'
+        script: 'newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml --delay-request 5000'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     
     - task: PublishTestResults@2
@@ -117,7 +116,7 @@ stages:
       displayName: Run Regression Tests
       continueOnError: true
       inputs:
-        script: 'newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml --reporter-cli-no-failures'
+        script: 'newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml --delay-request 5000'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     
     - task: PublishTestResults@2
