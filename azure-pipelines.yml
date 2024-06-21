@@ -78,20 +78,24 @@ stages:
 
     #--------------------------------------------#    
 
-    # Verify Node.js and npm installation
+    # Install Node.js using a script
     - task: CmdLine@2
-      displayName: Verify Node.js Installation
+      displayName: Install Node.js
       inputs:
-        script: 'node -v && npm -v'
+        script: |
+          curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          node -v
+          npm -v
         workingDirectory: $(System.DefaultWorkingDirectory)
-    
-    # Install Newman
+
+      # Install Newman
     - task: CmdLine@2
       displayName: Install Newman
       inputs:
         script: 'npm install -g newman'
         workingDirectory: $(System.DefaultWorkingDirectory)
-    
+        
     # Postman Data Validation Test Suite
     - task: CmdLine@2
       displayName: Run Data Validation Tests
