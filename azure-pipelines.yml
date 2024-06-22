@@ -28,9 +28,9 @@ stages:
 
 - stage: Provisioning
   displayName: Provisioning
-    jobs: 
-    - job: ProvisioningAppService
-      displayName: Provisioning AppService
+  jobs: 
+  - job: ProvisioningAppService
+    displayName: Provisioning AppService
       
     steps:          
     # Ensure unzip is installed
