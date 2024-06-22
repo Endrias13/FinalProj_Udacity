@@ -149,9 +149,26 @@ stages:
           sudo apt-get install -y openjdk-11-jdk
           java -version
 
-    - task: JMeterInstaller@0
+    - task: Bash@3
+      displayName: Install JMeter
       inputs:
-        jmeterVersion: '5.2.1'
+        targetType: 'inline'
+        script: |
+          JMETER_VERSION=5.2.1
+          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-$JMETER_VERSION.tgz
+          tar -xvzf apache-jmeter-$JMETER_VERSION.tgz
+          sudo mv apache-jmeter-$JMETER_VERSION /opt/jmeter
+          sudo ln -s /opt/jmeter/bin/jmeter /usr/local/bin/jmeter
+          jmeter -v
+
+    - task: Bash@3
+      displayName: Configure JMeter Memory
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo "Setting JMeter memory options"
+          export JVM_ARGS="-Xms512m -Xmx1024m"
+
 
     - task: Bash@3
       displayName: EnduranceTest
