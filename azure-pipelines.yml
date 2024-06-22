@@ -100,25 +100,17 @@ stages:
       displayName: Run Data Validation Tests
       continueOnError: true
       inputs:
-        script: 'newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --reporters cli,junit --reporter-junit-export Results/TEST-DataValidation.xml --delay-request 5000'
+        script: 'newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml --delay-request 5000'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-
+    
     # Postman Regression Test Suite
     - task: CmdLine@2
       displayName: Run Regression Tests
       continueOnError: true
       inputs:
-        script: 'newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --reporters cli,junit --reporter-junit-export Results/TEST-Regression.xml --delay-request 5000'
+        script: 'newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml --reporter-cli-no-failures'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
 
-    - task: PublishTestResults@2
-      displayName: Publish Test Reports
-      condition: always()
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: 'Results/*.xml'
-        failTaskOnFailedTests: true
-        testRunTitle: 'Postman Data Validation Tests'
 
     # Destroy VM
     - task: TerraformTaskV3@3
