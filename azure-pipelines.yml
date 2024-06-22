@@ -94,29 +94,58 @@ stages:
         script: 'sudo npm install -g newman'
         workingDirectory: $(System.DefaultWorkingDirectory)
 
+    - task: CmdLine@2
+      displayName: Create Results Folder
+      inputs:
+        script: 'mkdir -p $(System.DefaultWorkingDirectory)/automatedtesting/postman/Results'
+        workingDirectory: $(System.DefaultWorkingDirectory)
+    
     # Postman Data Validation Test Suite
     - task: CmdLine@2
       displayName: Run Data Validation Tests
       continueOnError: true
       inputs:
-        script: 'newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export $(System.DefaultWorkingDirectory)/Results/TEST-DataValidation.xml'
+        script: |
+          echo "Running Data Validation Tests..."
+          newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export $(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-DataValidation.xml
+          echo "Data Validation Tests completed. Checking results..."
+          if [ -f "$(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-DataValidation.xml" ]; then
+            echo "TEST-DataValidation.xml exists."
+            cat $(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-DataValidation.xml
+          else
+            echo "TEST-DataValidation.xml does not exist."
+            exit 1
+          fi
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-        
-
+    
     # Postman Regression Test Suite
     - task: CmdLine@2
       displayName: Run Regression Tests
       continueOnError: true
       inputs:
-        script: 'newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export $(System.DefaultWorkingDirectory)/Results/TEST-Regression.xml'
+        script: |
+          echo "Running Regression Tests..."
+          newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export $(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-Regression.xml
+          echo "Regression Tests completed. Checking results..."
+          if [ -f "$(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-Regression.xml" ]; then
+            echo "TEST-Regression.xml exists."
+            cat $(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-Regression.xml
+          else
+            echo "TEST-Regression.xml does not exist."
+            exit 1
+          fi
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-
+    
+    # Publish Test Results
     - task: PublishTestResults@2
       displayName: Publish Test Reports
       condition: always()
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: '$(System.DefaultWorkingDirectory)/Results/*.xml'
+        testResultsFiles: '$(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/*.xml'
+        failTaskOnFailedTests: true
+        testRunTitle: 'Postman Tests'
+
     
     # Destroy VM
     - task: TerraformTaskV3@3
@@ -126,7 +155,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_virtual_machine.finalProj-VM'
+        commandOptions: '-auto-approve -no-color -target=azurerm_virtual_machine.finalProj-VM -lock=false'
         additionalArguments: '-timeout=20m'
     
     # Destroy Network Interface
@@ -137,7 +166,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_network_interface.finalproj-vm626_z1'
+        commandOptions: '-auto-approve -no-color -target=azurerm_network_interface.finalproj-vm626_z1 -lock=false'
         additionalArguments: '-timeout=20m'
     
     # Destroy Public IP
@@ -148,7 +177,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_public_ip.finalProj-VM-ip'
+        commandOptions: '-auto-approve -no-color -target=azurerm_public_ip.finalProj-VM-ip -lock=false'
         additionalArguments: '-timeout=20m'
     
     # Destroy Managed Disk
@@ -159,7 +188,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_managed_disk.finalProj-VM_OsDisk_1_25030be430a044d1a5971866351741fa'
+        commandOptions: '-auto-approve -no-color -target=azurerm_managed_disk.finalProj-VM_OsDisk_1_25030be430a044d1a5971866351741fa -lock=false'
         additionalArguments: '-timeout=20m'
     
     # Destroy Subnet Network Security Group Association
@@ -170,7 +199,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_subnet_network_security_group_association.endriasApplication-NET-sub'
+        commandOptions: '-auto-approve -no-color -target=azurerm_subnet_network_security_group_association.endriasApplication-NET-sub -lock=false'
         additionalArguments: '-timeout=20m'
     
     # Destroy Subnet
@@ -181,7 +210,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_subnet.endriasApplication-NET-sub'
+        commandOptions: '-auto-approve -no-color -target=azurerm_subnet.endriasApplication-NET-sub -lock=false'
         additionalArguments: '-timeout=20m'
     
     # Destroy Virtual Network
@@ -192,7 +221,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_virtual_network.endriasApplication-NET'
+        commandOptions: '-auto-approve -no-color -target=azurerm_virtual_network.endriasApplication-NET -lock=false'
         additionalArguments: '-timeout=20m'
     
     # Destroy Storage Account
@@ -203,7 +232,7 @@ stages:
         command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -target=azurerm_storage_account.mystoragefinalproj'
+        commandOptions: '-auto-approve -no-color -target=azurerm_storage_account.mystoragefinalproj -lock=false'
         additionalArguments: '-timeout=20m'
     
 
