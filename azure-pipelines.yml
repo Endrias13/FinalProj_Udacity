@@ -107,7 +107,7 @@ stages:
       displayName: Run Data Validation Tests
       continueOnError: true
       inputs:
-        script: 'newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --reporters cli,junit --reporter-junit-export $(System.DefaultWorkingDirectory)/Results/TEST-DataValidation.xml --delay-request 5000'
+        script: 'newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --reporters cli,junit --reporter-junit-export Results/TEST-DataValidation.xml --delay-request 5000'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
 
     # Postman Regression Test Suite
@@ -115,7 +115,7 @@ stages:
       displayName: Run Regression Tests
       continueOnError: true
       inputs:
-        script: 'newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --reporters cli,junit --reporter-junit-export $(System.DefaultWorkingDirectory)/Results/TEST-Regression.xml --delay-request 5000'
+        script: 'newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --reporters cli,junit --reporter-junit-export Results/TEST-Regression.xml --delay-request 5000'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
 
     - task: PublishTestResults@2
@@ -123,7 +123,7 @@ stages:
       condition: always()
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: '$(System.DefaultWorkingDirectory)/Results/*.xml'
+        testResultsFiles: 'Results/*.xml'
         failTaskOnFailedTests: true
         testRunTitle: 'Postman Data Validation Tests'
 
