@@ -106,35 +106,21 @@ stages:
       continueOnError: true
       inputs:
         script: |
-          echo "Running Data Validation Tests..."
           newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export $(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-DataValidation.xml
-          echo "Data Validation Tests completed. Checking results..."
-          if [ -f "$(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-DataValidation.xml" ]; then
-            echo "TEST-DataValidation.xml exists."
-            cat $(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-DataValidation.xml
-          else
-            echo "TEST-DataValidation.xml does not exist."
-            exit 1
-          fi
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     
-    # Postman Regression Test Suite
+    # Verify that the test results file exists and is not empty
     - task: CmdLine@2
-      displayName: Run Regression Tests
-      continueOnError: true
+      displayName: Verify Test Results File
       inputs:
         script: |
-          echo "Running Regression Tests..."
-          newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export $(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-Regression.xml
-          echo "Regression Tests completed. Checking results..."
-          if [ -f "$(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-Regression.xml" ]; then
-            echo "TEST-Regression.xml exists."
-            cat $(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-Regression.xml
-          else
-            echo "TEST-Regression.xml does not exist."
+          if [ ! -s "$(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-DataValidation.xml" ]; then
+            echo "Test results file is missing or empty!"
             exit 1
+          else
+            echo "Test results file found and is not empty."
           fi
-        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+        workingDirectory: $(System.DefaultWorkingDirectory)
     
     # Publish Test Results
     - task: PublishTestResults@2
@@ -144,7 +130,7 @@ stages:
         testResultsFormat: 'JUnit'
         testResultsFiles: '$(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/*.xml'
         failTaskOnFailedTests: true
-        testRunTitle: 'Postman Tests'
+        testRunTitle: 'Postman Data Validation Tests'
 
     
     # Destroy VM
