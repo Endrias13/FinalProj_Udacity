@@ -59,6 +59,9 @@ stages:
                   tar -xvzf apache-jmeter-${JMETER_VERSION}.tgz
                   cd ${JMETER_DIR}
   
+                  # Set HEAP size for JMeter
+                  export HEAP="-Xms1g -Xmx2g"
+  
                   # Run the JMeter test plan
                   ./bin/jmeter -n -t ${TEST_PLAN} -l ${RESULTS_FILE}
   
@@ -68,7 +71,7 @@ stages:
                   else
                     echo "Test results file not found: ${RESULTS_FILE}"
                   fi
-  
+                
   - deployment: VMDeploy
     pool: myFinalPool
     displayName: VM Deploy
