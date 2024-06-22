@@ -150,17 +150,25 @@ stages:
               package: '$(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip'
               deploymentMethod: 'auto'
               
-            # Run JMeter test suite against the App Service
+          # Run JMeter test suite against the App Service
           - task: CmdLine@2
             displayName: 'Run JMeter Performance Tests'
             inputs:
               script: |
                 echo "Downloading JMeter..."
                 wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.2.1.tgz"
+                echo "Listing files after download:"
+                ls -l
+
+                echo "Extracting JMeter..."
                 tar -xf apache-jmeter-5.2.1.tgz
+                echo "Listing files after extracting JMeter:"
+                ls -l
 
                 echo "Unzipping performance test suite..."
                 unzip -o $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-perftests.zip -d $(Pipeline.Workspace)/perftests
+                echo "Listing files after unzipping performance test suite:"
+                ls -l $(Pipeline.Workspace)/perftests
 
                 echo "Running JMeter tests..."
                 export JVM_ARGS="-Xms512m -Xmx1024m"
