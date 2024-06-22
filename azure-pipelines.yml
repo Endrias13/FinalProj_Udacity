@@ -149,6 +149,28 @@ stages:
               appName: '$(appname)'
               package: '$(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip'
               deploymentMethod: 'auto'
+              
+            # Run JMeter test suite against the App Service
+          - task: CmdLine@2
+            displayName: 'Run JMeter Performance Tests'
+            inputs:
+              script: |
+                echo "Downloading JMeter..."
+                wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.2.1.tgz"
+                tar -xf apache-jmeter-5.2.1.tgz
+
+                echo "Unzipping performance test suite..."
+                unzip -o $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-perftests.zip -d $(Pipeline.Workspace)/perftests
+
+                echo "Running JMeter tests..."
+                export JVM_ARGS="-Xms512m -Xmx1024m"
+                ./apache-jmeter-5.2.1/bin/jmeter -n -t $(Pipeline.Workspace)/perftests/PerformanceTestSuite.jmx -j $(Pipeline.Workspace)/perftests/jmeter.log -f
+
+                echo "Displaying JMeter log..."
+                cat $(Pipeline.Workspace)/perftests/jmeter.log
+              workingDirectory: $(Pipeline.Workspace)
+
+  
   - deployment: VMDeploy
     pool: myFinalPool
     displayName: VM Deploy
