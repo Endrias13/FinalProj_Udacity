@@ -123,6 +123,34 @@ stages:
       artifact: selenium
 
 
+- stage: WebAppDeployment
+  displayName: Web App Deployment
+  jobs:
+  - deployment: FakeRestAPI
+    pool: myFinalPool
+    environment: 'WAP-TEST'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebApp@1
+            displayName: 'Deploy Azure Web App'
+            inputs:
+              azureSubscription: '$(azureServiceConnectionId)'
+              appType: 'webApp'
+              appName: 'EndriasAppFinal'
+              package: '$(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip'
+              deploymentMethod: 'auto'
+          - task: AzureCLI@2
+            displayName: 'Remove Azure Web App'
+            condition: always()
+            inputs:
+              azureSubscription: '$(azureServiceConnectionId)'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az webapp delete --name EndriasAppFinal --resource-group $(rgname)
+
 
 
     
