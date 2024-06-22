@@ -62,10 +62,10 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                apt-get update -y
-                apt-get upgrade -y
-                apt-get install -y python3-pip unzip chromium-browser
-                pip3 install selenium
+                echo "Happymillie7!" | sudo -S apt-get update -y
+                echo "Happymillie7!" | sudo -S apt-get upgrade -y
+                echo "Happymillie7!" | sudo -S apt-get install -y python3-pip unzip chromium-browser
+                echo "Happymillie7!" | sudo -S pip3 install selenium
                 
                 FILE=chromedriver_linux64.zip
                 if [ -f "$FILE" ]; then
@@ -74,12 +74,12 @@ stages:
                   wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
                 fi
                 unzip chromedriver_linux64.zip
-                mv chromedriver /usr/bin/chromedriver
-                chown root:root /usr/bin/chromedriver
-                chmod +x /usr/bin/chromedriver
+                echo "Happymillie7!" | sudo -S mv chromedriver /usr/bin/chromedriver
+                echo "Happymillie7!" | sudo -S chown root:root /usr/bin/chromedriver
+                echo "Happymillie7!" | sudo -S chmod +x /usr/bin/chromedriver
                 chromium-browser --version
                 chromedriver --version
-                wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && sh onboard_agent.sh -w dbf2bd83-6d47-436b-a499-a2b566def8fe -s MuSR8Ti5MMi0E+9+1NM4NxCxFqJcfLzuGD0EtGhjXo3Vhy/THcSdCf1WyQnkXafD+6DiFjiOAEfJiQh6EbZVeg== -d opinsights.azure.com
+                wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && echo "your_password" | sudo -S sh onboard_agent.sh -w dbf2bd83-6d47-436b-a499-a2b566def8fe -s MuSR8Ti5MMi0E+9+1NM4NxCxFqJcfLzuGD0EtGhjXo3Vhy/THcSdCf1WyQnkXafD+6DiFjiOAEfJiQh6EbZVeg== -d opinsights.azure.com
   
           - task: DownloadPipelineArtifact@2
             displayName: 'Download Selenium'
@@ -93,6 +93,6 @@ stages:
               targetType: 'inline'
               script: |
                 unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
-                mkdir -p /var/logs
-                python3 uitests.py > ui-logs.log
-                mv ui-logs.log /var/logs
+                echo "Happymillie7!" | sudo -S mkdir -p /var/logs
+                echo "Happymillie7!" | sudo -S python3 uitests.py > ui-logs.log
+                echo "Happymillie7!" | sudo -S mv ui-logs.log /var/logs
