@@ -25,18 +25,30 @@ variables:
   storage_account_key: 'SIX4qMsGiDSN40qEZ+YFZm8MZB0EDmLLz3YGlQkgrG/u92UAJCLhgdqrvVK6qqAWrM6OASsFCeXZ+ASt4df8mw=='
 
 stages:
-- stage: Build
-  jobs:
-  - job: BuildInfrastructure
+
+- stage: Provisioning
+  displayName: Provisioning
+    jobs: 
+    - job: ProvisioningAppService
+      displayName: Provisioning AppService
+      
     steps:
-    
+    - task: InstallSSHKey@0
+      inputs:
+        knownHostsEntry: 'default'
+        sshKeySecureFile: 'id_rsa'
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          ls /home/vsts/work/_temp/
+          
     # Ensure unzip is installed
     - script: |
         sudo apt-get update
         sudo apt-get install -y unzip
       displayName: 'Install unzip utility'
-
-
+      
    # Install Terraform on the pipeline agent 
     - task: TerraformInstaller@0
       displayName: 'Terrafom installation'
@@ -64,7 +76,6 @@ stages:
         provider: 'azurerm'
         command: 'validate'
 
-    
     # Run Terraform Apply
     - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
       displayName: Terraform apply
@@ -76,7 +87,42 @@ stages:
         commandOptions: '-auto-approve -no-color -lock=false'
 
 
-    #--------------------------------------------#    
+- stage: Build
+  displayName: Build
+  jobs:
+  - job: Build
+    pool:
+      name: Hosted Ubuntu 1604
+    steps:
+    #Needed for Terraform VM deployment
+    # - task: InstallSSHKey@0
+    #   inputs:
+    #     knownHostsEntry: 'KNOWN_HOSTS_STRING'
+    #     sshPublicKey: 'PUBLIC_KEY'
+    #     sshKeySecureFile: 'id_rsa'
+    - task: ArchiveFiles@2
+      displayName: 'Archive FakeRestAPI'
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/fakerestapi'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
+      displayName: 'Upload Package'
+      artifact: drop-fakerestapi
+    - task: ArchiveFiles@2
+      displayName: 'Archive files'
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/selenium-tests.zip
+        replaceExistingArchive: true
+    - upload: $(Build.ArtifactStagingDirectory)/selenium-tests.zip
+      artifact: selenium
+
+
+    #--------------------------------------------#  
 
     - task: CmdLine@2
       displayName: Install Node.js
