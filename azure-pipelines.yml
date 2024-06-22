@@ -21,6 +21,8 @@ variables:
   rgname: 'endrias2024_rg_354888' 
   #Storage Name
   storename: 'mystoragefinalproj' 
+  #App Name
+  appname: 'endriasApplication-AppService'
   backend_key: 'test.terraform.tfstate'
   storage_account_key: 'SIX4qMsGiDSN40qEZ+YFZm8MZB0EDmLLz3YGlQkgrG/u92UAJCLhgdqrvVK6qqAWrM6OASsFCeXZ+ASt4df8mw=='
 
@@ -137,18 +139,9 @@ stages:
             inputs:
               azureSubscription: '$(azureServiceConnectionId)'
               appType: 'webApp'
-              appName: 'EndriasAppFinal'
+              appName: '$(appname)'
               package: '$(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip'
               deploymentMethod: 'auto'
-          - task: AzureCLI@2
-            displayName: 'Remove Azure Web App'
-            condition: always()
-            inputs:
-              azureSubscription: '$(azureServiceConnectionId)'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                az webapp delete --name EndriasAppFinal --resource-group $(rgname)
 
 
 
