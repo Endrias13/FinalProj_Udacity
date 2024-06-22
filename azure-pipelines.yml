@@ -37,6 +37,44 @@ stages:
       displayName: 'Install unzip utility'
 
 
+   # Install Terraform on the pipeline agent 
+    - task: TerraformInstaller@0
+      displayName: 'Terrafom installation'
+      inputs:
+            terraformVersion: 1.2.9
+
+    # ToDo: Replace the resource group name, storage account name, and container name below
+    - task: TerraformTaskV3@3
+      displayName: 'Terrafom init again..'
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        backendServiceArm: '$(azureServiceConnectionId)'
+        backendAzureRmResourceGroupName: '$(rgname)'
+        backendAzureRmStorageAccountName: '$(storename)'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: '$(backend_key)'
+        backendAzureRmAccessKey: '$(storage_account_key)'
+
+    # Run Terraform Validate    
+    - task: TerraformTaskV3@3
+      displayName: Terraform validate
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+
+    
+    # Run Terraform Apply
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
+      displayName: Terraform apply
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+        commandOptions: '-auto-approve -no-color -lock=false'
+
 
     #--------------------------------------------#    
 
