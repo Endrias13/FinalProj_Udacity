@@ -159,14 +159,12 @@ stages:
       runOnce:
         deploy:
           steps:
-
-          - task: Bash@3
-            displayName: 'Configure Sudo'
-            inputs:
-              targetType: 'inline'
-              script: |
-                echo 'azureuser ALL=(ALL) NOPASSWD: ALL' | sudo EDITOR='tee -a' visudo
-
+            - task: Bash@3
+              displayName: 'Configure Sudo'
+              inputs:
+                targetType: 'inline'
+                script: |
+                  echo 'azureuser ALL=(ALL) NOPASSWD: ALL' | sudo EDITOR='tee -a' visudo
             - task: Bash@3
               displayName: 'Install Dependencies'
               inputs:
