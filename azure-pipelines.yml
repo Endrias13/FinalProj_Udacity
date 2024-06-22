@@ -93,7 +93,7 @@ stages:
     #     sshPublicKey: 'PUBLIC_KEY'
     #     sshKeySecureFile: 'id_rsa'
 
-     - script: |
+    - script: |
         sudo apt-get update
         sudo apt-get install -y zip
       displayName: 'Install zip utility'
