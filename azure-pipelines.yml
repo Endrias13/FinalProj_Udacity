@@ -78,7 +78,7 @@ stages:
         command: 'apply'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color'
+        commandOptions: '-auto-approve -no-color -lock-timeout=10m'
 
 
 
