@@ -94,13 +94,39 @@ stages:
         script: 'sudo npm install -g newman'
         workingDirectory: $(System.DefaultWorkingDirectory)
 
-
+    # Create Results folder if it doesn't exist
+    - task: CmdLine@2
+      displayName: Create Results Folder
+      inputs:
+        script: 'mkdir -p $(System.DefaultWorkingDirectory)/automatedtesting/postman/Results'
+        workingDirectory: $(System.DefaultWorkingDirectory)
+    
+    # Verify the presence of Newman and test files
+    - task: CmdLine@2
+      displayName: Verify Files and Newman Installation
+      inputs:
+        script: |
+          echo "Checking Newman installation..."
+          newman -v
+          echo "Checking if test files exist..."
+          ls -l $(System.DefaultWorkingDirectory)/automatedtesting/postman/DataValidationTestSuite.json
+          ls -l $(System.DefaultWorkingDirectory)/automatedtesting/postman/DataValidationTestSuite.Environment.json
+        workingDirectory: $(System.DefaultWorkingDirectory)
+    
     # Postman Data Validation Test Suite
     - task: CmdLine@2
       displayName: Run Data Validation Tests
       continueOnError: true
       inputs:
-        script: 'newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml --delay-request 5000'
+        script: |
+          echo "Running Data Validation Tests..."
+          newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --reporters cli,junit --reporter-junit-export $(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-DataValidation.xml --delay-request 5000
+          exitCode=$?
+          echo "Data Validation Tests completed with exit code $exitCode"
+          if [ $exitCode -ne 0 ]; then
+            echo "Newman run failed with exit code $exitCode"
+            exit 1
+          fi
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     
     # Postman Regression Test Suite
@@ -108,8 +134,17 @@ stages:
       displayName: Run Regression Tests
       continueOnError: true
       inputs:
-        script: 'newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml --reporter-cli-no-failures'
+        script: |
+          echo "Running Regression Tests..."
+          newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --reporters cli,junit --reporter-junit-export $(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-Regression.xml --delay-request 5000
+          exitCode=$?
+          echo "Regression Tests completed with exit code $exitCode"
+          if [ $exitCode -ne 0 ]; then
+            echo "Newman run failed with exit code $exitCode"
+            exit 1
+          fi
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+
 
 
     # Destroy VM
