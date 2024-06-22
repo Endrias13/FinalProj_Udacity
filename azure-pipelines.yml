@@ -75,7 +75,7 @@ stages:
               lease_id=$(az storage blob lease acquire --blob-name $(backend_key) --container-name tfstate --account-name $(storename) --account-key $(storage_account_key) --duration -1 --query leaseId -o tsv)
               echo "Acquired lease ID: $lease_id"
               echo "##vso[task.setvariable variable=LEASE_ID]$lease_id"
-     displayName: 'Acquire lease on state file'
+      displayName: 'Acquire lease on state file'
 
     # Run Terraform Apply
     - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
