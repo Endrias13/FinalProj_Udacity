@@ -36,43 +36,6 @@ stages:
         sudo apt-get install -y unzip
       displayName: 'Install unzip utility'
 
-    # Install Terraform on the pipeline agent 
-    - task: TerraformInstaller@0
-      displayName: 'Terrafom installation'
-      inputs:
-            terraformVersion: 1.2.9
-
-    # ToDo: Replace the resource group name, storage account name, and container name below
-    - task: TerraformTaskV3@3
-      displayName: 'Terrafom init again..'
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        backendServiceArm: '$(azureServiceConnectionId)'
-        backendAzureRmResourceGroupName: '$(rgname)'
-        backendAzureRmStorageAccountName: '$(storename)'
-        backendAzureRmContainerName: 'tfstate'
-        backendAzureRmKey: '$(backend_key)'
-        backendAzureRmAccessKey: '$(storage_account_key)'
-
-    # Run Terraform Validate    
-    - task: TerraformTaskV3@3
-      displayName: Terraform validate
-      inputs:
-        provider: 'azurerm'
-        command: 'validate'
-
-    
-    # Run Terraform Apply
-    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
-      displayName: Terraform apply
-      inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -lock=false'
 
 
     #--------------------------------------------#    
@@ -101,7 +64,7 @@ stages:
       displayName: Run Data Validation Tests
       continueOnError: true
       inputs:
-        script: 'newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --delay-request 10000 --bail newman -x --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
+        script: 'newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --delay-request 10000 --bail newman -x --reporters cli,junit --reporter-junit-export Results/TEST-DataValidation.xml'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     
     
@@ -110,7 +73,7 @@ stages:
       displayName: Run Regression Tests
       continueOnError: true
       inputs:
-        script: 'newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --delay-request 10000 --bail newman -x --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
+        script: 'newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --delay-request 10000 --bail newman -x --reporters cli,junit --reporter-junit-export Results/TEST-Regression.xml'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
 
 
@@ -119,7 +82,7 @@ stages:
       condition: always()
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: 'TEST-*.xml'
+        testResultsFiles: '$(System.DefaultWorkingDirectory)/Results/*.xml'
         failTaskOnFailedTests: true
         testRunTitle: 'Postman Data Validation Tests'
         
