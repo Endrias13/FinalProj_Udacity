@@ -70,6 +70,7 @@ stages:
         provider: 'azurerm'
         command: 'validate'
 
+
     # Run Terraform Apply
     - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
       displayName: Terraform apply
@@ -79,15 +80,17 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
         commandOptions: '-auto-approve -no-color -lock=false'
+        continueOnError: true  # Continue on error to execute the next step
 
+    # Add a step to push the state if the previous step failed
     - script: |
-              if [ $? -ne 0 ]; then
-                terraform state push errored.tfstate
-              fi
-              displayName: 'Push Terraform state if apply failed'
-              condition: failed()  # Run this step only if the previous step failed
-
-
+        if [ -f errored.tfstate ]; then
+          terraform state push errored.tfstate
+        else
+          echo "No errored state file found."
+        fi
+      displayName: 'Push Terraform state if apply failed'
+      condition: failed()  # Run this step only if the previous step failed
 
 
 - stage: Build
