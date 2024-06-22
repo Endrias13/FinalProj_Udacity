@@ -41,7 +41,16 @@ stages:
         sudo apt-get update
         sudo apt-get install -y unzip
       displayName: 'Install unzip utility'
-      
+
+    - task: AzureCLI@2
+      displayName: 'Break existing lease'
+      inputs:
+        azureSubscription: '$(azureServiceConnectionId)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az storage blob lease break --blob-name $(backend_key) --container-name terraform-state --account-name $(storename)
+        
    # Install Terraform on the pipeline agent 
     - task: TerraformInstaller@0
       displayName: 'Terrafom installation'
