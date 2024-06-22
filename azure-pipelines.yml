@@ -140,6 +140,15 @@ stages:
     pool: myFinalPool
     steps: 
 
+    - task: Bash@3
+      displayName: Install Java
+      inputs:
+        targetType: 'inline'
+        script: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jdk
+          java -version
+
     - task: JMeterInstaller@0
       inputs:
         jmeterVersion: '5.2.1'
