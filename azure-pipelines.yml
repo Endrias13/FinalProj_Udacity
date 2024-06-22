@@ -28,109 +28,6 @@ variables:
 
 stages:
 
-- stage: Provisioning
-  displayName: Provisioning
-  jobs: 
-  - job: ProvisioningAppService
-    displayName: Provisioning AppService
-      
-    steps:    
-    # Ensure unzip is installed
-    - script: |
-        sudo apt-get update
-        sudo apt-get install -y unzip
-      displayName: 'Install unzip utility'
-
-
-   # Install Terraform on the pipeline agent 
-    - task: TerraformInstaller@0
-      displayName: 'Terrafom installation'
-      inputs:
-            terraformVersion: 1.2.9
-            
-    # ToDo: Replace the resource group name, storage account name, and container name below
-    - task: TerraformTaskV3@3
-      displayName: 'Terrafom init again..'
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        backendServiceArm: '$(azureServiceConnectionId)'
-        backendAzureRmResourceGroupName: '$(rgname)'
-        backendAzureRmStorageAccountName: '$(storename)'
-        backendAzureRmContainerName: 'tfstate'
-        backendAzureRmKey: '$(backend_key)'
-        backendAzureRmAccessKey: '$(storage_account_key)'
-
-    # Run Terraform Validate    
-    - task: TerraformTaskV3@3
-      displayName: Terraform validate
-      inputs:
-        provider: 'azurerm'
-        command: 'validate'
-
-
-    # Run Terraform Apply
-    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
-      displayName: Terraform apply
-      inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -lock=false'
-        continueOnError: true  # Continue on error to execute the next step
-
-    - script: |
-        az storage blob lease release --blob-name $(backend_key) --container-name tfstate --account-name $(storename) --account-key $(storage_account_key) --lease-id $(LEASE_ID)
-        echo "Released lease ID: $(LEASE_ID)"
-      displayName: 'Release lease on state file'
-      condition: always()  # Always run this step to ensure the lease is released
-
-
-- stage: Build
-  displayName: Build
-  jobs:
-  - job: Build
-    pool: myFinalPool
-    steps:
-    #Needed for Terraform VM deployment
-    # - task: InstallSSHKey@0
-    #   inputs:
-    #     knownHostsEntry: 'KNOWN_HOSTS_STRING'
-    #     sshPublicKey: 'PUBLIC_KEY'
-    #     sshKeySecureFile: 'id_rsa'
-
-    - script: |
-        sudo apt-get update
-        sudo apt-get install -y zip
-      displayName: 'Install zip utility'
-      
-    - task: ArchiveFiles@2
-      displayName: 'Archive FakeRestAPI'
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/fakerestapi'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
-   
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-      displayName: 'Upload Package'
-      artifact: drop-fakerestapi
-    
-    - task: ArchiveFiles@2
-      displayName: 'Archive files'
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
-        includeRootFolder: false
-        archiveType: zip
-        archiveFile: $(Build.ArtifactStagingDirectory)/selenium-tests.zip
-        replaceExistingArchive: true
-        
-    - upload: $(Build.ArtifactStagingDirectory)/selenium-tests.zip
-      artifact: selenium
-
-
 
 - stage: JMeterTests
   displayName: JMeter Tests
@@ -148,7 +45,16 @@ stages:
           sudo apt-get update
           sudo apt-get install -y openjdk-11-jdk
           java -version
-    
+
+    - task: Bash@3
+      displayName: Configure JMeter Memory
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo "Setting JMeter memory options"
+          echo 'export JVM_ARGS="-Xms512m -Xmx1024m"' >> ~/.bashrc
+          source ~/.bashrc
+
     - task: Bash@3
       displayName: Install JMeter
       inputs:
@@ -165,14 +71,6 @@ stages:
           sudo ln -s /opt/jmeter/bin/jmeter /usr/local/bin/jmeter
           jmeter -v
 
-    - task: Bash@3
-      displayName: Configure JMeter Memory
-      inputs:
-        targetType: 'inline'
-        script: |
-          echo "Setting JMeter memory options"
-          echo 'export JVM_ARGS="-Xms512m -Xmx1024m"' >> ~/.bashrc
-          source ~/.bashrc
 
     - task: Bash@3
       displayName: EnduranceTest
