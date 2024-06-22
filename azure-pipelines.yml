@@ -148,7 +148,7 @@ stages:
           sudo apt-get update
           sudo apt-get install -y openjdk-11-jdk
           java -version
-
+    
     - task: Bash@3
       displayName: Install JMeter
       inputs:
@@ -158,6 +158,10 @@ stages:
           wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-$JMETER_VERSION.tgz
           tar -xvzf apache-jmeter-$JMETER_VERSION.tgz
           sudo mv apache-jmeter-$JMETER_VERSION /opt/jmeter
+          # Remove existing symbolic link if it exists
+          if [ -L /usr/local/bin/jmeter ]; then
+            sudo rm /usr/local/bin/jmeter
+          fi
           sudo ln -s /opt/jmeter/bin/jmeter /usr/local/bin/jmeter
           jmeter -v
 
@@ -167,8 +171,8 @@ stages:
         targetType: 'inline'
         script: |
           echo "Setting JMeter memory options"
-          export JVM_ARGS="-Xms512m -Xmx1024m"
-
+          echo 'export JVM_ARGS="-Xms512m -Xmx1024m"' >> ~/.bashrc
+          source ~/.bashrc
 
     - task: Bash@3
       displayName: EnduranceTest
