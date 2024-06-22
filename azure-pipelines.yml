@@ -120,7 +120,6 @@ stages:
         failTaskOnFailedTests: true
         testRunTitle: 'Postman Data Validation Tests'
 
-    
     # Destroy VM
     - task: TerraformTaskV3@3
       displayName: 'Terraform destroy VM'
