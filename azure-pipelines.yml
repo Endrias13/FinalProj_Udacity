@@ -48,10 +48,7 @@ stages:
       displayName: 'Terrafom installation'
       inputs:
             terraformVersion: 1.2.9
-
-    - script: terraform force-unlock 33784066-0367-b342-cdb2-cb14fd6cd682
-      displayName: 'Force Unlock Terraform State'
-
+            
     # ToDo: Replace the resource group name, storage account name, and container name below
     - task: TerraformTaskV3@3
       displayName: 'Terrafom init again..'
@@ -81,8 +78,7 @@ stages:
         command: 'apply'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -lock-timeout=10m'
-
+        commandOptions: '-auto-approve -no-color -lock=false'
 
 
 
