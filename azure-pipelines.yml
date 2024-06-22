@@ -80,9 +80,10 @@ stages:
                   wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
                 fi
                 echo "Unzipping chromedriver_linux64.zip..."
-                unzip chromedriver_linux64.zip
+                unzip chromedriver_linux64.zip -d chromedriver_temp
+                ls -l chromedriver_temp
                 echo "Moving chromedriver to /usr/bin/chromedriver..."
-                echo "Happymillie7!" | sudo -S mv chromedriver /usr/bin/chromedriver
+                echo "Happymillie7!" | sudo -S mv chromedriver_temp/chromedriver /usr/bin/chromedriver
                 echo "Changing ownership and permissions for chromedriver..."
                 echo "Happymillie7!" | sudo -S chown root:root /usr/bin/chromedriver
                 echo "Happymillie7!" | sudo -S chmod +x /usr/bin/chromedriver
