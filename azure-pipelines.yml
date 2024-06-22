@@ -95,21 +95,6 @@ stages:
                 wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && echo "Happymillie7!" | sudo -S sh onboard_agent.sh -w dbf2bd83-6d47-436b-a499-a2b566def8fe -s MuSR8Ti5MMi0E+9+1NM4NxCxFqJcfLzuGD0EtGhjXo3Vhy/THcSdCf1WyQnkXafD+6DiFjiOAEfJiQh6EbZVeg== -d opinsights.azure.com
                 echo "Installation of dependencies complete."
 
-          - task: Bash@3
-            displayName: 'List Artifacts'
-            inputs:
-              targetType: 'inline'
-              script: |
-                echo "Listing available artifacts for build $(Build.BuildId)..."
-                curl -s -u "$(System.AccessToken):" \
-                  "https://dev.azure.com/$(System.TeamProjectId)/_apis/build/builds/$(Build.BuildId)/artifacts" \
-                  | jq '.value[] | .name'
-
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download Selenium'
-            inputs:
-              buildType: 'current'
-              artifactName: 'selenium'
 
           - task: DownloadPipelineArtifact@2
             displayName: 'Download Selenium'
