@@ -66,8 +66,8 @@ stages:
                 echo "Happymillie7!" | sudo -S apt-get update -y
                 echo "Happymillie7!" | sudo -S apt-get upgrade -y
                 
-                echo "Installing python3-pip, unzip, and chromium-browser..."
-                echo "Happymillie7!" | sudo -S apt-get install -y python3-pip unzip chromium-browser
+                echo "Installing python3-pip, unzip, chromium-browser, and jq..."
+                echo "Happymillie7!" | sudo -S apt-get install -y python3-pip unzip chromium-browser jq
                 echo "Installing selenium..."
                 echo "Happymillie7!" | sudo -S pip3 install selenium
                 
