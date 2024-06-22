@@ -131,44 +131,28 @@ stages:
       artifact: selenium
 
 
-- stage: IntegrationTests
-  displayName: Integration Tests
-  pool: myFinalPool
+
+- stage: JMeterTests
+  displayName: JMeter Tests
   jobs:
-  - job: PostmanTests
-    displayName: PostmanTests
+  - job: JMeterTests
+    displayName: JMeterTests
     steps: 
-    - task: NodeTool@0
-      displayName: Install Node v16.X
+    - task: JMeterInstaller@0
       inputs:
-        versionSpec: '16.x'
-    - task: CmdLine@2
-      displayName: Install Newman
+        jmeterVersion: '5.2.1'
+    - task: Bash@3
+      displayName: EnduranceTest
       inputs:
-        script: 'npm install newman'
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-    - task: CmdLine@2
-      displayName: Run Regression Tests
+        targetType: 'inline'
+        script: 'jmeter -n -t automatedtesting/jmeter/EnduranceTestSuite.jmx -Jresdir=automatedtesting/jmeter/endurancepages.csv -l automatedtesting/jmeter/report/enduranceresults.jtl -e -o automatedtesting/jmeter/endurancereport'
+    - task: Bash@3
+      displayName: StressTest
       inputs:
-        script: 'newman run automatedtesting/postman/RegressionTestSuite.json -e automatedtesting/postman/RegressionTestSuite.Environment.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export Results/RegressionTests.xml'
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-      continueOnError: true
-    - task: CmdLine@2
-      displayName: Run Data Validation Tests
+        targetType: 'inline'
+        script: 'jmeter -n -t automatedtesting/jmeter/StressTestSuite.jmx -Jresdir=automatedtesting/jmeter/stresspages.csv -l automatedtesting/jmeter/report/stressresults.jtl -e -o automatedtesting/jmeter/stressreport'
+    - task: PublishBuildArtifacts@1
       inputs:
-        script: 'newman run automatedtesting/postman/DataValidationTestSuite.json -e automatedtesting/postman/DataValidationTestSuite.Environment.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export Results/DataValidationTests.xml'
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-      continueOnError: true
-    - task: CmdLine@2
-      inputs:
-        script: 'ls'
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-    - task: PublishTestResults@2
-      displayName: Publish Test Reports
-      condition: always()
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '$(System.DefaultWorkingDirectory)/Results/*.xml'
-
-
-
+        PathtoPublish: 'automatedtesting/jmeter'
+        ArtifactName: 'jmeter'
+        publishLocation: 'Container'
