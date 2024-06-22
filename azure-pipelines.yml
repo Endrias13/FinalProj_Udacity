@@ -84,8 +84,8 @@ stages:
               if [ $? -ne 0 ]; then
                 terraform state push errored.tfstate
               fi
-            displayName: 'Push Terraform state if apply failed'
-            condition: failed()  # Run this step only if the previous step failed
+              displayName: 'Push Terraform state if apply failed'
+              condition: failed()  # Run this step only if the previous step failed
 
 
 
