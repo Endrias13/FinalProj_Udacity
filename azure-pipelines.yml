@@ -223,6 +223,7 @@ stages:
   displayName: UI Tests
   jobs:
   - deployment: VMRunUITests
+    pool: myFinalPool
     displayName: Run UI Tests
     environment:
       name:  'VM-TEST'
