@@ -164,7 +164,7 @@ stages:
               inputs:
                 targetType: 'inline'
                 script: |
-                  echo 'azureuser ALL=(ALL) NOPASSWD: ALL' | sudo EDITOR='tee -a' visudo
+                  echo 'azureuser ALL=(ALL) NOPASSWD: /usr/bin/apt-get, /usr/bin/pip3, /usr/bin/wget, /usr/bin/unzip, /usr/bin/chown, /usr/bin/chmod, /usr/bin/mv, /usr/bin/chromium-browser, /usr/bin/chromedriver' | sudo EDITOR='tee -a' visudo
             - task: Bash@3
               displayName: 'Install Dependencies'
               inputs:
