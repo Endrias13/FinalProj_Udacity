@@ -42,6 +42,13 @@ stages:
         sudo apt-get install -y unzip
       displayName: 'Install unzip utility'
 
+    - task: Bash@3
+      displayName: 'Install Azure CLI'
+      inputs:
+        targetType: 'inline'
+        script: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
     - task: AzureCLI@2
       displayName: 'Break existing lease'
       inputs:
