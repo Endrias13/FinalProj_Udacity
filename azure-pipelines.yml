@@ -94,14 +94,7 @@ stages:
         script: 'sudo npm install -g newman'
         workingDirectory: $(System.DefaultWorkingDirectory)
 
- 
-     # Create Results folder if it doesn't exist
-    - task: CmdLine@2
-      displayName: Create Results Folder
-      inputs:
-        script: 'mkdir -p $(System.DefaultWorkingDirectory)/Results'
-        workingDirectory: $(System.DefaultWorkingDirectory)
-    
+
     # Postman Data Validation Test Suite
     - task: CmdLine@2
       displayName: Run Data Validation Tests
