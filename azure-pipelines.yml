@@ -119,7 +119,7 @@ stages:
       condition: always()
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: '$(System.DefaultWorkingDirectory)/Results/*.xml'
+        testResultsFiles: 'Results/*.xml'
         failTaskOnFailedTests: true
         testRunTitle: 'Postman Data Validation Tests'
         
