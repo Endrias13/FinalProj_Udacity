@@ -26,7 +26,7 @@ variables:
   backend_key: 'test.terraform.tfstate'
   storage_account_key: 'SIX4qMsGiDSN40qEZ+YFZm8MZB0EDmLLz3YGlQkgrG/u92UAJCLhgdqrvVK6qqAWrM6OASsFCeXZ+ASt4df8mw=='
 
-
+stages:
 
 - stage: Provisioning
   displayName: Provisioning
@@ -131,7 +131,6 @@ variables:
       artifact: selenium
 
 
-stages:
 - stage: WebAppDeployment
   displayName: Web App Deployment
   jobs:
