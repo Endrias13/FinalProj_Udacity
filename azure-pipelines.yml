@@ -71,6 +71,12 @@ stages:
         command: 'validate'
 
 
+   - script: |
+              lease_id=$(az storage blob lease acquire --blob-name $(backend_key) --container-name tfstate --account-name $(storename) --account-key $(storage_account_key) --duration -1 --query leaseId -o tsv)
+              echo "Acquired lease ID: $lease_id"
+              echo "##vso[task.setvariable variable=LEASE_ID]$lease_id"
+     displayName: 'Acquire lease on state file'
+
     # Run Terraform Apply
     - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
       displayName: Terraform apply
@@ -82,15 +88,11 @@ stages:
         commandOptions: '-auto-approve -no-color -lock=false'
         continueOnError: true  # Continue on error to execute the next step
 
-    # Add a step to push the state if the previous step failed
     - script: |
-        if [ -f errored.tfstate ]; then
-          terraform state push errored.tfstate
-        else
-          echo "No errored state file found."
-        fi
-      displayName: 'Push Terraform state if apply failed'
-      condition: failed()  # Run this step only if the previous step failed
+        az storage blob lease release --blob-name $(backend_key) --container-name tfstate --account-name $(storename) --account-key $(storage_account_key) --lease-id $(LEASE_ID)
+        echo "Released lease ID: $(LEASE_ID)"
+      displayName: 'Release lease on state file'
+      condition: always()  # Always run this step to ensure the lease is released
 
 
 - stage: Build
