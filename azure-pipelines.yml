@@ -44,9 +44,15 @@ stages:
               inputs:
                 script: |
                   # Install JMeter if not already installed
-                  wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.5.tgz
+                  wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz
                   tar -xvzf apache-jmeter-5.5.tgz
                   cd apache-jmeter-5.5
+  
+                  # Run the JMeter test plan
+                  ./bin/jmeter -n -t $(Pipeline.Workspace)/tests/test-plan.jmx -l $(Pipeline.Workspace)/results/test-result.jtl
+  
+                  # Print the test results
+                  cat $(Pipeline.Workspace)/results/test-result.jtl
   
   - deployment: VMDeploy
     pool: myFinalPool
