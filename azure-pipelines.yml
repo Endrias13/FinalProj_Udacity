@@ -94,10 +94,12 @@ stages:
         script: 'sudo npm install -g newman'
         workingDirectory: $(System.DefaultWorkingDirectory)
 
+ 
+     # Create Results folder if it doesn't exist
     - task: CmdLine@2
       displayName: Create Results Folder
       inputs:
-        script: 'mkdir -p $(System.DefaultWorkingDirectory)/automatedtesting/postman/Results'
+        script: 'mkdir -p $(System.DefaultWorkingDirectory)/Results'
         workingDirectory: $(System.DefaultWorkingDirectory)
     
     # Postman Data Validation Test Suite
@@ -105,30 +107,23 @@ stages:
       displayName: Run Data Validation Tests
       continueOnError: true
       inputs:
-        script: |
-          newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export $(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-DataValidation.xml
+        script: 'newman run DataValidationTestSuite.json -e DataValidationTestSuite.Environment.json --reporters cli,junit --reporter-junit-export $(System.DefaultWorkingDirectory)/Results/TEST-DataValidation.xml --delay-request 5000'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    
-    # Verify that the test results file exists and is not empty
+
+    # Postman Regression Test Suite
     - task: CmdLine@2
-      displayName: Verify Test Results File
+      displayName: Run Regression Tests
+      continueOnError: true
       inputs:
-        script: |
-          if [ ! -s "$(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/TEST-DataValidation.xml" ]; then
-            echo "Test results file is missing or empty!"
-            exit 1
-          else
-            echo "Test results file found and is not empty."
-          fi
-        workingDirectory: $(System.DefaultWorkingDirectory)
-    
-    # Publish Test Results
+        script: 'newman run RegressionTestSuite.json -e RegressionTestSuite.Environment.json --reporters cli,junit --reporter-junit-export $(System.DefaultWorkingDirectory)/Results/TEST-Regression.xml --delay-request 5000'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+
     - task: PublishTestResults@2
       displayName: Publish Test Reports
       condition: always()
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: '$(System.DefaultWorkingDirectory)/automatedtesting/postman/Results/*.xml'
+        testResultsFiles: '$(System.DefaultWorkingDirectory)/Results/*.xml'
         failTaskOnFailedTests: true
         testRunTitle: 'Postman Data Validation Tests'
 
