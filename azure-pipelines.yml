@@ -122,7 +122,6 @@ stages:
     - upload: $(Build.ArtifactStagingDirectory)/selenium-tests.zip
       artifact: selenium
 
-
 - stage: WebAppDeployment
   displayName: Web App Deployment
   jobs:
