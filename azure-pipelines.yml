@@ -53,7 +53,7 @@ stages:
     environment:
       name: 'VM-TEST'
       resourceType: VirtualMachine
-    strategy:
+      strategy:
       runOnce:
         deploy:
           steps:
@@ -62,25 +62,38 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
+                echo "Updating and upgrading the system..."
                 echo "Happymillie7!" | sudo -S apt-get update -y
                 echo "Happymillie7!" | sudo -S apt-get upgrade -y
+                
+                echo "Installing python3-pip, unzip, and chromium-browser..."
                 echo "Happymillie7!" | sudo -S apt-get install -y python3-pip unzip chromium-browser
+                echo "Installing selenium..."
                 echo "Happymillie7!" | sudo -S pip3 install selenium
                 
+                echo "Checking for chromedriver_linux64.zip..."
                 FILE=chromedriver_linux64.zip
                 if [ -f "$FILE" ]; then
                   echo "$FILE exists."
                 else
+                  echo "Downloading chromedriver_linux64.zip..."
                   wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
                 fi
+                echo "Unzipping chromedriver_linux64.zip..."
                 unzip chromedriver_linux64.zip
+                echo "Moving chromedriver to /usr/bin/chromedriver..."
                 echo "Happymillie7!" | sudo -S mv chromedriver /usr/bin/chromedriver
+                echo "Changing ownership and permissions for chromedriver..."
                 echo "Happymillie7!" | sudo -S chown root:root /usr/bin/chromedriver
                 echo "Happymillie7!" | sudo -S chmod +x /usr/bin/chromedriver
+                echo "Chromium browser version:"
                 chromium-browser --version
+                echo "Chromedriver version:"
                 chromedriver --version
-                wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && echo "your_password" | sudo -S sh onboard_agent.sh -w dbf2bd83-6d47-436b-a499-a2b566def8fe -s MuSR8Ti5MMi0E+9+1NM4NxCxFqJcfLzuGD0EtGhjXo3Vhy/THcSdCf1WyQnkXafD+6DiFjiOAEfJiQh6EbZVeg== -d opinsights.azure.com
-  
+                echo "Downloading and running OMS agent script..."
+                wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && echo "Happymillie7!" | sudo -S sh onboard_agent.sh -w dbf2bd83-6d47-436b-a499-a2b566def8fe -s MuSR8Ti5MMi0E+9+1NM4NxCxFqJcfLzuGD0EtGhjXo3Vhy/THcSdCf1WyQnkXafD+6DiFjiOAEfJiQh6EbZVeg== -d opinsights.azure.com
+                echo "Installation of dependencies complete."
+
           - task: DownloadPipelineArtifact@2
             displayName: 'Download Selenium'
             inputs:
@@ -92,7 +105,12 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
+                echo "Unzipping selenium tests..."
                 unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
+                echo "Creating /var/logs directory..."
                 echo "Happymillie7!" | sudo -S mkdir -p /var/logs
+                echo "Running UI tests..."
                 echo "Happymillie7!" | sudo -S python3 uitests.py > ui-logs.log
+                echo "Moving logs to /var/logs..."
                 echo "Happymillie7!" | sudo -S mv ui-logs.log /var/logs
+                echo "UI tests completed."
