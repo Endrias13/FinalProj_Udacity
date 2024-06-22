@@ -28,109 +28,6 @@ variables:
 
 stages:
 
-- stage: Provisioning
-  displayName: Provisioning
-  jobs: 
-  - job: ProvisioningAppService
-    displayName: Provisioning AppService
-      
-    steps:    
-    
-    # Ensure unzip is installed
-    - script: |
-        sudo apt-get update
-        sudo apt-get install -y unzip
-      displayName: 'Install unzip utility'
-
-
-   # Install Terraform on the pipeline agent 
-    - task: TerraformInstaller@0
-      displayName: 'Terrafom installation'
-      inputs:
-            terraformVersion: 1.2.9
-            
-    # ToDo: Replace the resource group name, storage account name, and container name below
-    - task: TerraformTaskV3@3
-      displayName: 'Terrafom init again..'
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        backendServiceArm: '$(azureServiceConnectionId)'
-        backendAzureRmResourceGroupName: '$(rgname)'
-        backendAzureRmStorageAccountName: '$(storename)'
-        backendAzureRmContainerName: 'tfstate'
-        backendAzureRmKey: '$(backend_key)'
-        backendAzureRmAccessKey: '$(storage_account_key)'
-
-    # Run Terraform Validate    
-    - task: TerraformTaskV3@3
-      displayName: Terraform validate
-      inputs:
-        provider: 'azurerm'
-        command: 'validate'
-
-
-    # Run Terraform Apply
-    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
-      displayName: Terraform apply
-      inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-auto-approve -no-color -lock=false'
-        continueOnError: true  # Continue on error to execute the next step
-
-    - script: |
-        az storage blob lease release --blob-name $(backend_key) --container-name tfstate --account-name $(storename) --account-key $(storage_account_key) --lease-id $(LEASE_ID)
-        echo "Released lease ID: $(LEASE_ID)"
-      displayName: 'Release lease on state file'
-      condition: always()  # Always run this step to ensure the lease is released
-
-
-- stage: Build
-  displayName: Build
-  jobs:
-  - job: Build
-    pool: myFinalPool
-    steps:
-    #Needed for Terraform VM deployment
-    # - task: InstallSSHKey@0
-    #   inputs:
-    #     knownHostsEntry: 'KNOWN_HOSTS_STRING'
-    #     sshPublicKey: 'PUBLIC_KEY'
-    #     sshKeySecureFile: 'id_rsa'
-
-    - script: |
-        sudo apt-get update
-        sudo apt-get install -y zip
-      displayName: 'Install zip utility'
-      
-    - task: ArchiveFiles@2
-      displayName: 'Archive FakeRestAPI'
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/fakerestapi'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
-   
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-      displayName: 'Upload Package'
-      artifact: drop-fakerestapi
-    
-    - task: ArchiveFiles@2
-      displayName: 'Archive files'
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
-        includeRootFolder: false
-        archiveType: zip
-        archiveFile: $(Build.ArtifactStagingDirectory)/selenium-tests.zip
-        replaceExistingArchive: true
-   
-    - upload: $(Build.ArtifactStagingDirectory)/selenium-tests.zip
-      artifact: selenium
-
 - stage: WebAppDeployment
   displayName: Web App Deployment
   jobs:
@@ -151,6 +48,7 @@ stages:
               deploymentMethod: 'auto'
 
   - deployment: VMDeploy
+    pool: myFinalPool
     displayName: VM Deploy
     environment:
       name: 'VM-TEST'
@@ -159,12 +57,6 @@ stages:
       runOnce:
         deploy:
           steps:
-            - task: Bash@3
-              displayName: 'Configure Sudo'
-              inputs:
-                targetType: 'inline'
-                script: |
-                  echo 'azureuser ALL=(ALL) NOPASSWD: /usr/bin/apt-get, /usr/bin/pip3, /usr/bin/wget, /usr/bin/unzip, /usr/bin/chown, /usr/bin/chmod, /usr/bin/mv, /usr/bin/chromium-browser, /usr/bin/chromedriver' | sudo EDITOR='tee -a' visudo
             - task: Bash@3
               displayName: 'Install Dependencies'
               inputs:
