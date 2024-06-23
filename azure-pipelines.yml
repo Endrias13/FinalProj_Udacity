@@ -29,189 +29,28 @@ variables:
 
 stages:
 
-- stage: WebAppDeployment
-  displayName: Web App Deployment
-  jobs:
-  - deployment: FakeRestAPI
-    pool: myFinalPool
-    environment: 'WAP-TEST'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-
-            - task: CmdLine@2
-              displayName: 'Run JMeter Tests'
-              inputs:
-                script: |
-                  # Set variables
-                  JMETER_VERSION="5.5"
-                  JMETER_URL="https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz"
-                  JMETER_DIR="apache-jmeter-${JMETER_VERSION}"
-                  TEST_PLAN="$(Pipeline.Workspace)/tests/test-plan.jmx"
-                  RESULTS_DIR="$(Pipeline.Workspace)/results"
-                  RESULTS_FILE="${RESULTS_DIR}/test-result.jtl"
-  
-                  # Create necessary directories
-                  mkdir -p ${RESULTS_DIR}
-  
-                  # Download and install JMeter
-                  wget ${JMETER_URL}
-                  tar -xvzf apache-jmeter-${JMETER_VERSION}.tgz
-                  cd ${JMETER_DIR}
-  
-                  # Set HEAP size for JMeter
-                  export HEAP="-Xms1g -Xmx2g"
-  
-                  # Run the JMeter test plan
-                  ./bin/jmeter -n -t ${TEST_PLAN} -l ${RESULTS_FILE}
-  
-                  # Print the test results
-                  if [ -f "${RESULTS_FILE}" ]; then
-                    cat ${RESULTS_FILE}
-                  else
-                    echo "Test results file not found: ${RESULTS_FILE}"
-                  fi
-                
-  - deployment: VMDeploy
-    pool: myFinalPool
-    displayName: VM Deploy
-    environment:
-      name: 'VM-TEST'
-      resourceType: VirtualMachine
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: Bash@3
-            displayName: 'Install Dependencies'
-            inputs:
-              targetType: 'inline'
-              script: |
-                echo "Updating and upgrading the system..."
-                echo "Happymillie7!" | sudo -S apt-get update -y
-                echo "Happymillie7!" | sudo -S apt-get upgrade -y
-                
-                echo "Installing python3-pip, unzip, chromium-browser, and jq..."
-                echo "Happymillie7!" | sudo -S apt-get install -y python3-pip unzip chromium-browser jq
-                echo "Installing selenium..."
-                echo "Happymillie7!" | sudo -S pip3 install selenium
-                
-                echo "Checking for chromedriver_linux64.zip..."
-                FILE=chromedriver_linux64.zip
-                if [ -f "$FILE" ]; then
-                  echo "$FILE exists."
-                else
-                  echo "Downloading chromedriver_linux64.zip..."
-                  wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
-                fi
-                echo "Unzipping chromedriver_linux64.zip..."
-                unzip chromedriver_linux64.zip -d chromedriver_temp
-                ls -l chromedriver_temp
-                echo "Moving chromedriver to /usr/bin/chromedriver..."
-                echo "Happymillie7!" | sudo -S mv chromedriver_temp/chromedriver /usr/bin/chromedriver
-                echo "Changing ownership and permissions for chromedriver..."
-                echo "Happymillie7!" | sudo -S chown root:root /usr/bin/chromedriver
-                echo "Happymillie7!" | sudo -S chmod +x /usr/bin/chromedriver
-                echo "Chromium browser version:"
-                chromium-browser --version
-                echo "Chromedriver version:"
-                chromedriver --version
-                echo "Downloading and running OMS agent script..."
-                wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && echo "Happymillie7!" | sudo -S sh onboard_agent.sh -w dbf2bd83-6d47-436b-a499-a2b566def8fe -s MuSR8Ti5MMi0E+9+1NM4NxCxFqJcfLzuGD0EtGhjXo3Vhy/THcSdCf1WyQnkXafD+6DiFjiOAEfJiQh6EbZVeg== -d opinsights.azure.com
-                echo "Installation of dependencies complete."
-
-
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download Selenium'
-            inputs:
-              buildType: 'current'
-              artifactName: 'selenium'
-  
-          - task: Bash@3
-            displayName: 'UI Tests'
-            inputs:
-              targetType: 'inline'
-              script: |
-                echo "Unzipping selenium tests..."
-                unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
-                echo "Creating /var/logs directory..."
-                echo "Happymillie7!" | sudo -S mkdir -p /var/logs
-                echo "Running UI tests..."
-                echo "Happymillie7!" | sudo -S python3 uitests.py > ui-logs.log
-                echo "Moving logs to /var/logs..."
-                echo "Happymillie7!" | sudo -S mv ui-logs.log /var/logs
-                echo "UI tests completed."
-
-- stage: UITests
-  displayName: UI Tests
-  jobs:
-  - deployment: VMRunUITests
-    pool: myFinalPool
-    displayName: Run UI Tests
-    environment:
-      name:  'VM-TEST'
-      resourceType: VirtualMachine
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - download: current
-            displayName: 'Download Selenium'
-            artifact: selenium
-          - task: Bash@3
-            displayName: UI Tests
-            inputs:
-              targetType: 'inline'
-              script: |
-                unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
-                sudo -S mkdir -p /var/logs <<< "Happymillie7!"
-                # Ensure uitests.py is in the current directory or specify the correct path
-                if [ -f "uitests.py" ]; then
-                  python3 uitests.py > ui-logs.log
-                else
-                  echo "Error: uitests.py not found"
-                  exit 1
-                fi
-                cat ui-logs.log
-                sudo -S mv ui-logs.log /var/logs <<< "Happymillie7!"
-
-
-- stage: IntegrationTests
-  displayName: Integration Tests
+- stage: JMeterTests
+  displayName: JMeter Tests
   pool: myFinalPool
   jobs:
-  - job: PostmanTests
-    displayName: PostmanTests
+  - job: JMeterTests
+    displayName: JMeterTests
     steps: 
-    - task: NodeTool@0
-      displayName: Install Node v16.X
+    - task: JMeterInstaller@0
       inputs:
-        versionSpec: '16.x'
-    - task: CmdLine@2
-      displayName: Install Newman
+        jmeterVersion: '5.2.1'
+    - task: Bash@3
+      displayName: EnduranceTest
       inputs:
-        script: 'npm install newman'
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-    - task: CmdLine@2
-      displayName: Run Regression Tests
+        targetType: 'inline'
+        script: 'jmeter -n -t automatedtesting/jmeter/EnduranceTestSuite.jmx -Jresdir=automatedtesting/jmeter/endurancepages.csv -l automatedtesting/jmeter/report/enduranceresults.jtl -e -o automatedtesting/jmeter/endurancereport'
+    - task: Bash@3
+      displayName: StressTest
       inputs:
-        script: 'newman run automatedtesting/postman/RegressionTestSuite.json -e automatedtesting/postman/RegressionTestSuite.Environment.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export Results/RegressionTests.xml'
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-      continueOnError: true
-    - task: CmdLine@2
-      displayName: Run Data Validation Tests
+        targetType: 'inline'
+        script: 'jmeter -n -t automatedtesting/jmeter/StressTestSuite.jmx -Jresdir=automatedtesting/jmeter/stresspages.csv -l automatedtesting/jmeter/report/stressresults.jtl -e -o automatedtesting/jmeter/stressreport'
+    - task: PublishBuildArtifacts@1
       inputs:
-        script: 'newman run automatedtesting/postman/DataValidationTestSuite.json -e automatedtesting/postman/DataValidationTestSuite.Environment.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export Results/DataValidationTests.xml'
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-      continueOnError: true
-    - task: CmdLine@2
-      inputs:
-        script: 'ls'
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-    - task: PublishTestResults@2
-      displayName: Publish Test Reports
-      condition: always()
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '$(System.DefaultWorkingDirectory)/Results/*.xml'
+        PathtoPublish: 'automatedtesting/jmeter'
+        ArtifactName: 'jmeter'
+        publishLocation: 'Container'
