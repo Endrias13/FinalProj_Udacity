@@ -39,6 +39,7 @@ stages:
       runOnce:
         deploy:
           steps:
+
             - task: CmdLine@2
               displayName: 'Run JMeter Tests'
               inputs:
